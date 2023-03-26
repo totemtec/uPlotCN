@@ -1,4 +1,4 @@
-### Documentation
+### 📈 μPlot 中文文档
 
 - [安装](#installation)
 - [数据格式](#data-format)
