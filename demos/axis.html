@@ -13,20 +13,16 @@
     <div id="plot"></div>
     <script src="../dist/uPlot.iife.min.js"></script>
     <script>
-        // 图表数据，是个多维数组，第 0 个数组是 x 轴数据
         let data = [
             [1646300800, 1646301600, 1646302400, 1646303200],    // x 方向数据（时间戳，秒）
             [2335, 2430, 2671, 2363],    // y 方向数据 (序列 1)
             [903, null, 1115, 1345],    // y 方向数据 (序列 2)
         ];
 
-        // 图表配置项
         let opts = {
-            title: "轴的配置",  // 标题
-            id: "chart1",  // 图表 div 的 id
-            class: "my-chart", // 图表 div 的 CSS 样式类，会跟在 uplot 类样式的后面
-            width: 800,    // 图表和轴区域的宽度
-            height: 600,  // 图表和轴区域的高度，不包含标题和图例
+            title: "轴的配置",
+            width: 800,
+            height: 600,
             series: [
                 {},
                 {
@@ -43,13 +39,39 @@
                     border: {      
                         show: true,
                         stroke: 'red'
-                    }
+                    },
+                    
+                    // splits: (uPlot, axisIdx, scaleMin, scaleMax, foundIncr, foundSpace) => {
+                    //     console.log(`X splits axisIdx=${axisIdx}, scaleMin=${scaleMin}, scaleMax=${scaleMax}, foundIncr=${foundIncr}, foundSpace=${foundSpace}`);
+                    //     return [100, 150, 200, 250, 300];
+                    // },
                 },
                 {
                     side: 1,      // y 轴的位置，设置在右侧
-                    size: 30,    // y 轴的宽度，不包含轴上的刻度标签
+                    size: 60,    // y 轴的宽度，不包含轴上的刻度标签
                     gap: 0,
                     space: 50,    // 轴上文本标签或网格的最小空间
+
+                    space: (uPlot, axisIdx, scaleMin, scaleMax, plotDim) => {
+                        // plotDim 是轴的长度 533
+                        console.log(`Y space axisIdx=${axisIdx}, scaleMin=${scaleMin}, scaleMax=${scaleMax}, plotDim=${plotDim}`);
+                        // 下面表达式，是期望刻度间隔最小为 ( plotDim / 5 ) px
+                        return plotDim / 5;
+                    },
+
+                    // 返回一组从小到大的数值，这是轴刻度的分割器，图表会自动计算找最合适的数作为刻度大小
+                    incrs: (self, axisIdx, scaleMin, scaleMax, fullDim, minSpace) => {
+                        // fullDim 是 533，minSpace 是 66.6 = 533 / 8
+                        console.log(`Y incrs axisIdx=${axisIdx}, scaleMin=${scaleMin}, scaleMax=${scaleMax}, fullDim=${fullDim}, minSpace=${minSpace}`);
+                        return [100, 200, 300, 400, 600, 1000];
+                    },
+
+                    // 所有刻度的数组，源码里算法可以直接用，会对数值做一些整数对齐。如果自己知道数值区间，自己
+                    splits: (uPlot, axisIdx, scaleMin, scaleMax, foundIncr, foundSpace) => {
+                        // foundIncr 就是上面方法找到的最佳的刻度间隔，但是本方法中没有使用，因为我们明确知道用什么样的刻度
+                        console.log(`Y splits axisIdx=${axisIdx}, scaleMin=${scaleMin}, scaleMax=${scaleMax}, foundIncr=${foundIncr}, foundSpace=${foundSpace}`);
+                        return [1000, 1500, 2000, 2500, 3000];
+                    },
                     
                 },
                 {

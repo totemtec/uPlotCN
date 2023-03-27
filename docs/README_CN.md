@@ -367,7 +367,7 @@ let opts = {
 }
 ```
 
-- `space` 是相邻刻度之间的最小间距；较小的数字就是用较小的分割器。也可以是一个函数，形式为 `(self, axisIdx, scaleMin, scaleMax, dim) => space` ，其中 dim 是沿轴的维度在 CSS 像素中的尺寸。
+- `space` 是相邻刻度之间的最小间距；较小的数字就是用较小的分割器。也可以是一个函数，形式为 `(self, axisIdx, scaleMin, scaleMax, plotDim) => space` ，其中 plotDim 是轴的长度。
 - `incrs` 是给轴分段，生成刻度的分割器。也可以是形式为 `(self) => divisors` 的函数。
 - `values` 可以是：
   - 具有形式 `(self, ticks, space) => values` 的函数，其中 ticks 是沿轴比例尺的原始值数组，space 是以 CSS 像素确定的刻度间距，values 是格式化的刻度标签数组。
