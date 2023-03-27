@@ -11,7 +11,7 @@
 
 <body>
     <div id="plot"></div>
-    <script src="../dist/uPlot.iife.min.js"></script>
+    <script src="../dist/uPlot.iife.js"></script>
     <script>
         let data = [
             [1646300800, 1646301600, 1646302400, 1646303200],    // x 方向数据（时间戳，秒）
@@ -35,7 +35,7 @@
             axes: [              // 注意这个字段的拼写 axes 不是 axis
                 {
                     size: 50,   // x 轴的高度
-                    gap: 10,    // 轴上的文字和轴的基线之间的间距
+                    gap: 0,    // 轴上的文字和轴的基线之间的间距
                     border: {      
                         show: true,
                         stroke: 'red'
@@ -49,24 +49,37 @@
                 {
                     side: 1,      // y 轴的位置，设置在右侧
                     size: 60,    // y 轴的宽度，不包含轴上的刻度标签
-                    gap: 0,
-                    space: 50,    // 轴上文本标签或网格的最小空间
+                    // space: 50,    // 轴上文本标签或网格的最小空间
 
                     space: (uPlot, axisIdx, scaleMin, scaleMax, plotDim) => {
                         // plotDim 是轴的长度 533
                         console.log(`Y space axisIdx=${axisIdx}, scaleMin=${scaleMin}, scaleMax=${scaleMax}, plotDim=${plotDim}`);
-                        // 下面表达式，是期望刻度间隔最小为 ( plotDim / 5 ) px
-                        return plotDim / 5;
+                        // 下面表达式，是期望刻度间隔最小为 ( plotDim / 8 ) px。这里期望不一定能实现，见下面算法
+                        return plotDim / 8;
                     },
 
-                    // 返回一组从小到大的数值，这是轴刻度的分割器，图表会自动计算找最合适的数作为刻度大小
-                    incrs: (self, axisIdx, scaleMin, scaleMax, fullDim, minSpace) => {
-                        // fullDim 是 533，minSpace 是 66.6 = 533 / 8
-                        console.log(`Y incrs axisIdx=${axisIdx}, scaleMin=${scaleMin}, scaleMax=${scaleMax}, fullDim=${fullDim}, minSpace=${minSpace}`);
-                        return [100, 200, 300, 400, 600, 1000];
-                    },
+                    /**
+                     * 间距增量数组，从小到大排列成数组。系统按照如下算法找到一个刻度的最佳间距 foundIncr
+                     * 刻度尺长度 fullDim / 最小空间 minSpace = 结果可以把刻度尺分为 n 份
+                     * （ 刻度尺最大值 scaleMax - 刻度尺最小值 scaleMin ）/ n = 每份的数值间隔 i
+                     * i 这个值可能千奇百怪的，我们在 incrs 数组里找一个比 i 稍微大一点的值，就是最佳刻度间距 foundIncr
+                     */
+                    // incrs: (self, axisIdx, scaleMin, scaleMax, fullDim, minSpace) => {
+                    //     // fullDim 是 533，minSpace 是 66.625 = 533 / 8
+                    //     console.log(`Y incrs axisIdx=${axisIdx}, scaleMin=${scaleMin}, scaleMax=${scaleMax}, fullDim=${fullDim}, minSpace=${minSpace}`);
+                    //     return [100, 200, 300, 400, 600, 1000];
+                    //     // 默认的 numIncrs = [... 0.1, 0.2, 0.25, 0.5, 1, 2, 2.5, 5 ... 100, 200, 250, 500, 1000, 2000, 2500, 5000 ...]
+                    //     // 默认的 timeIncrs = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000 ...]
+                    // },
 
-                    // 所有刻度的数组，源码里算法可以直接用，会对数值做一些整数对齐。如果自己知道数值区间，自己
+                    /**
+                     * 所有刻度的数组，源码里算法可以直接用，会对数值做一些整数对齐。如果自己知道数值区间，自己设置为数组即可
+                     * foundIncr 只是找到了最佳间距，scaleMin 可能不那么规整比如 2381，我们不能用这么细碎的数值做刻度，需要让刻度规整一些
+                     * 在 splits 提供的方法里可以找个规整的起点，方法如下：
+                     * 比如 foundIncr 为 250，那么刻度就是 [0, 250, 500, 750, 1000 ...]
+                     * 比如 foundIncr 为 500，那么刻度就是 [0, 500, 1000, 1500, 2000 ...]
+                     * 刻度当然要考虑 scaleMin 和 scaleMax 数值区间，不一定是从 0 开始的，上面只是举例怎么规整刻度
+                     */ 
                     splits: (uPlot, axisIdx, scaleMin, scaleMax, foundIncr, foundSpace) => {
                         // foundIncr 就是上面方法找到的最佳的刻度间隔，但是本方法中没有使用，因为我们明确知道用什么样的刻度
                         console.log(`Y splits axisIdx=${axisIdx}, scaleMin=${scaleMin}, scaleMax=${scaleMax}, foundIncr=${foundIncr}, foundSpace=${foundSpace}`);

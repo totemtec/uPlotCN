@@ -578,15 +578,18 @@ declare namespace uPlot {
 		lock?: boolean; // false
 	}
 
+	/**
+	 * 刻度尺
+	 */
 	export namespace Scale {
 		export type Auto = boolean | ((self: uPlot, resetScales: boolean) => boolean);
 
 		export type Range = Range.MinMax | Range.Function | Range.Config;
 
 		export const enum Distr {
-			Linear      = 1,
-			Ordinal     = 2,
-			Logarithmic = 3,
+			Linear      = 1,	//线性坐标
+			Ordinal     = 2,    //
+			Logarithmic = 3,    //对数坐标
 			ArcSinh     = 4,
 		}
 
@@ -595,6 +598,9 @@ declare namespace uPlot {
 		export type Clamp = number | ((self: uPlot, val: number, scaleMin: number, scaleMax: number, scaleKey: string) => number);
 	}
 
+	/**
+	 * 刻度尺
+	 */
 	export interface Scale {
 		/** 是否是时间刻度尺，该轴数据需要 Unix 时间戳，单位秒 */
 		time?: boolean;
@@ -850,7 +856,7 @@ declare namespace uPlot {
 		/** 序列开关 （可选，默认为true），为 false 则不显示本序列数据 */
 		show?: boolean;
 
-		/** className to add to legend parts and cursor hover points */
+		/** 图例部件和鼠标悬停点的样式类 */
 		class?: string;
 
 		/** 刻度尺的键 */
@@ -977,9 +983,12 @@ declare namespace uPlot {
 
 		export type Rotate = number | ((self: uPlot, values: (string | number)[], axisIdx: number, foundSpace: number) => number);
 
+		/**
+		 * 正交线
+		 */
 		interface OrthoLines {
-			/** on/off */
-			show?: boolean; // true
+			/** 是否显示，默认true */
+			show?: boolean;
 
 			/** 线条颜色 */
 			stroke?: Stroke;
@@ -994,6 +1003,9 @@ declare namespace uPlot {
 			cap?: Series.Cap;
 		}
 
+		/**
+		 * 交界线，边线
+		 */
 		export interface Border extends OrthoLines {}
 
 		interface FilterableOrthoLines extends OrthoLines {
@@ -1001,19 +1013,28 @@ declare namespace uPlot {
 			filter?: Filter;
 		}
 
+		/**
+		 * 网格
+		 */
 		export interface Grid extends FilterableOrthoLines {}
 
+		/**
+		 * 刻度
+		 */
 		export interface Ticks extends FilterableOrthoLines {
 			/** length of tick in CSS pixels */
 			size?: number;
 		}
 	}
 
+	/**
+	 * 轴
+	 */
 	export interface Axis {
-		/** axis on/off */
+		/** 轴的显示开关 */
 		show?: boolean;
 
-		/** scale key */
+		/** 刻度尺 */
 		scale?: string;
 
 		/** 轴在图的什么方向 - 0: 上方, 1: 右侧, 2: 底部, 3: 左侧 */
@@ -1022,7 +1043,7 @@ declare namespace uPlot {
 		/** x 轴的高度 或者 y 轴的宽度。空间包括值、空隙、刻度。但是不包括轴上的文字标签 */
 		size?: Axis.Size;
 
-		/** gap between axis values and axis baseline (or ticks, if enabled) in CSS pixels */
+		/** 轴上文字/刻度和轴基线之间的间隙  */
 		gap?: number;
 
 		/** 该轴值的字体 */
@@ -1037,43 +1058,46 @@ declare namespace uPlot {
 		/** 轴上标签文本 */
 		label?: string;
 
-		/** height of x axis label or width of y axis label in CSS pixels alloted for label text + labelGap */
+		/** x 轴标签高度，y 轴标签宽度，放置标签文本和标签间隙 */
 		labelSize?: number;
 
-		/** gap between label baseline and tick values in CSS pixels */
+		/** 标签间隙，标签基线和刻度值的间隙 */
 		labelGap?: number;
 
-		/** font used for axis label */
+		/** 标签字体 */
 		labelFont?: CanvasRenderingContext2D['font'];
 
-		/** 网格或刻度的最小空间 */
+		/** 网格或刻度的最小空间，单位 px */
 		space?: Axis.Space;
 
-		/** available divisors for axis ticks, values, grid */
+		/** 
+		 * 增量分割器，一组数值从小到大，轴长度除以最小空间 space，挨着结果较小的那个就是整个轴最佳分割份数
+		 * 例如：时间增量间隔数组 [1, 2, 5, 10, 30, 60]，x 轴宽度为 600px，最小间隔为 50px，600/50=12，
+		 * 用12在数组里找偏小一点的，找到10，则整个 x 轴分成10个刻度是最合适的 */
 		incrs?: Axis.Incrs;
 
-		/** determines how and where the axis must be split for placing ticks, values, grid */
+		/** 轴上分割线位置，用来放置刻度，数值，网格 */
 		splits?: Axis.Splits;
 
 		/** can filter which splits are passed to axis.values() for rendering. e.g splits.map(v => v % 2 == 0 ? v : null) */
 		filter?: Axis.Filter;
 
-		/** 格式化渲染值 */
+		/** 数值格式器 */
 		values?: Axis.Values;
 
 		/** values rotation in degrees off horizontal (only bottom axes w/ side: 2) */
 		rotate?: Axis.Rotate;
 
-		/** text alignment of axis values - 1: left, 2: right */
+		/** 轴上数值对齐方式，1:左，2右 */
 		align?: Axis.Align;
 
-		/** gridlines to draw from this axis' splits */
+		/** 网格线，根据 splits 来绘制 */
 		grid?: Axis.Grid;
 
-		/** 刻度，ticks to draw from this axis' splits */
+		/** 刻度，根据 splits 来绘制 */
 		ticks?: Axis.Ticks;
 
-		/** axis border/edge rendering */
+		/** 轴与图之间的分界线 */
 		border?: Axis.Border;
 	}
 
