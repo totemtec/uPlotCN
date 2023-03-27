@@ -8,7 +8,7 @@
 - [多轴和多刻度尺](#multiple-scales--axes)
 - [刻度尺配置](#scale-opts)
 - [轴和网格配置](#axis--grid-opts)
-- WIP: [#48](https://github.com/leeoniya/uPlot/issues/48)
+- 文档: [#48](https://github.com/leeoniya/uPlot/issues/48)
 
 ---
 #### 安装

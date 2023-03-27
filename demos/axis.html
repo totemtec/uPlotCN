@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>轴的配置</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="../dist/uPlot.min.css">
+</head>
+
+<body>
+    <div id="plot"></div>
+    <script src="../dist/uPlot.iife.min.js"></script>
+    <script>
+        // 图表数据，是个多维数组，第 0 个数组是 x 轴数据
+        let data = [
+            [1646300800, 1646301600, 1646302400, 1646303200],    // x 方向数据（时间戳，秒）
+            [2335, 2430, 2671, 2363],    // y 方向数据 (序列 1)
+            [903, null, 1115, 1345],    // y 方向数据 (序列 2)
+        ];
+
+        // 图表配置项
+        let opts = {
+            title: "轴的配置",  // 标题
+            id: "chart1",  // 图表 div 的 id
+            class: "my-chart", // 图表 div 的 CSS 样式类，会跟在 uplot 类样式的后面
+            width: 800,    // 图表和轴区域的宽度
+            height: 600,  // 图表和轴区域的高度，不包含标题和图例
+            series: [
+                {},
+                {
+                    stroke: "red",
+                },
+                {
+                    stroke: "blue",
+                }
+            ],
+            axes: [              // 注意这个字段的拼写 axes 不是 axis
+                {
+                    size: 50,   // x 轴的高度
+                    gap: 10,    // 轴上的文字和轴的基线之间的间距
+                    border: {      
+                        show: true,
+                        stroke: 'red'
+                    }
+                },
+                {
+                    side: 1,      // y 轴的位置，设置在右侧
+                    size: 30,    // y 轴的宽度，不包含轴上的刻度标签
+                    gap: 0,
+                    space: 50,    // 轴上文本标签或网格的最小空间
+                    
+                },
+                {
+                    show: false, // 是否显示这个轴
+                },
+            ]
+        };
+
+        // 图表容器
+        let uplotContainer = document.getElementById('plot');
+        let uplot = new uPlot(opts, data, uplotContainer);
+
+        // uplot 是图表实例，随时可以对图表进行操作，比如：uplot.destroy(); 也是各个函数中的 self
+    </script>
+
+</body>
+
+</html>

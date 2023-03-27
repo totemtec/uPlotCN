@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>基本用法 - 折线图</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="../dist/uPlot.min.css">
+</head>
+
+<body>
+    <div id="plot"></div>
+    <script src="../dist/uPlot.iife.min.js"></script>
+    <script>
+        // 图表数据，是个多维数组，第 0 个数组是 x 轴数据
+        let data = [
+            [1646300800, 1646301600, 1646302400, 1646303200],    // x 方向数据（时间戳，秒）
+            [35, 30, 71, 63],    // y 方向数据 (序列 1)
+            [90, null, 15, 45],    // y 方向数据 (序列 2)
+        ];
+
+        // 图表配置项
+        let opts = {
+            title: "基本用法 - 折线图",  // 标题
+            id: "chart1",  // 图表 div 的 id
+            class: "my-chart", // 图表 div 的 CSS 样式类，会跟在 uplot 类样式的后面
+            width: 800,    // 图表和轴区域的宽度
+            height: 600,  // 图表和轴区域的高度，不包含标题和图例
+            series: [  // 序列数组，描述各序列的属性
+                {},    // x 方向序列，使用默认属性
+                {      // y 方向第 1 序列属性
+                    
+                    show: true, // 初始切换状态 （可选，默认为true），为 false 则不显示本序列数据
+
+                    // 图例显示的内容
+                    label: "RAM",  // 图例文本标签，默认为 Value
+                    value: (self, rawValue) => rawValue.toFixed(2) + 'MB',  // 图例值格式器
+
+                    // 序列样式
+                    stroke: "red",  // 线条颜色
+                    width: 1,  // 线条宽度
+                    fill: "rgba(255, 0, 0, 0.3)",  // 填充颜色
+                    fillTo: 50,  // 填充基线，填充面积是从基线到点和连线
+                    dash: [10, 5],  // 虚线数组，按照实线长度，空白长度，重复这个模式来描述虚线
+                },
+                {      // y 方向第 2 序列属性
+                    spanGaps: true,  // 为 true 时，空数据不会造成断线。短线会有点，没有连线
+
+                    label: "CPU",
+                    value: (self, rawValue) => rawValue.toFixed(2) + '%',  // 图例值格式器
+
+                    // 序列样式
+                    stroke: "blue",
+                }
+            ],
+        };
+
+        // 图表容器
+        let uplotContainer = document.getElementById('plot');
+        let uplot = new uPlot(opts, data, uplotContainer);
+
+        // uplot 是图表实例，随时可以对图表进行操作，比如：uplot.destroy(); 也是各个函数中的 self
+    </script>
+
+</body>
+
+</html>

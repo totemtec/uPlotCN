@@ -1,6 +1,6 @@
 ## 📈 μPlot 中文文档
 
-一个小巧([最小约 ~45 KB](https://github.com/leeoniya/uPlot/tree/master/dist/uPlot.iife.min.js))[快速]()的图表库，适用于时间序列、线性图、面积图、K线图和柱状图（MIT许可证）。
+一个小巧([最小约 ~45 KB](https://github.com/leeoniya/uPlot/tree/master/dist/uPlot.iife.min.js))[快速](#)的图表库，适用于时间序列、线性图、面积图、K线图和柱状图（MIT许可证）。
 
 ---
 ### 介绍

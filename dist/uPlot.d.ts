@@ -6,16 +6,16 @@ declare class uPlot {
 		targ?: HTMLElement | ((self: uPlot, init: Function) => void)
 	);
 
-	/** 图表容器 div */
+	/** 图表容器根元素 div，好像是父元素的 div ？？？ */
 	readonly root: HTMLElement;
 
 	/** status */
 	readonly status: 0 | 1;
 
-	/** width of the plotting area + axes in CSS pixels */
+	/** 绘图区域 + 轴 的宽度，单位是 px */
 	readonly width: number;
 
-	/** height of the plotting area + axes in CSS pixels (excludes title & legend height) */
+	/** 绘图区域 + 轴 的高度，单位是 px， (不包含标题和图例的高度) */
 	readonly height: number;
 
 	/** context of canvas used for plotting area + axes */
@@ -270,6 +270,9 @@ declare namespace uPlot {
 
 	export type Padding = [top: PaddingSide, right: PaddingSide, bottom: PaddingSide, left: PaddingSide];
 
+	/**
+	 * 图例
+	 */
 	export interface Legend {
 		show?: boolean;	// true
 		/** show series values at current cursor.idx */
@@ -336,19 +339,19 @@ declare namespace uPlot {
 		/** 1: aligned & ordered, single-x / y-per-series, 2: unordered & faceted, per-series/per-point x,y,size,label,color,shape,etc. */
 		mode?: Mode,
 
-		/** chart title */
+		/** 图表标题，默认在上方中间 */
 		title?: string;
 
-		/** id to set on chart div */
+		/** 图表 div 的 id */
 		id?: string;
 
 		/** className to add to chart div */
 		class?: string;
 
-		/** width of plotting area + axes in CSS pixels */
+		/** 绘图区域和轴的宽度，单位 px */
 		width: number;
 
-		/** height of plotting area + axes in CSS pixels (excludes title & legend height) */
+		/** 绘图区域和轴的高度，单位 px（不包括标题和图例区域）*/
 		height: number;
 
 		/** data for chart, if none is provided as argument to constructor */
@@ -369,12 +372,14 @@ declare namespace uPlot {
 		/** whether vt & hz lines of series/grid/ticks should be crisp/sharp or sub-px antialiased */
 		pxAlign?: boolean | number; // true
 
+		// 序列数组，描述各序列的属性
 		series: Series[];
 
 		bands?: Band[];
 
 		scales?: Scales;
 
+		// 轴的配置
 		axes?: Axis[];
 
 		/** padding per side, in CSS pixels (can prevent cross-axis labels at the plotting area limits from being chopped off) */
@@ -591,7 +596,7 @@ declare namespace uPlot {
 	}
 
 	export interface Scale {
-		/** is this scale temporal, with series' data in UNIX timestamps? */
+		/** 是否是时间刻度尺，该轴数据需要 Unix 时间戳，单位秒 */
 		time?: boolean;
 
 		/** determines whether all series' data on this scale will be scanned to find the full min/max range */
@@ -633,10 +638,10 @@ declare namespace uPlot {
 
 	export namespace Series {
 		export interface Paths {
-			/** path to stroke */
+			/** 笔画路径 */
 			stroke?: Path2D | Map<CanvasRenderingContext2D['strokeStyle'], Path2D> | null;
 
-			/** path to fill */
+			/** 填充路径 */
 			fill?: Path2D | Map<CanvasRenderingContext2D['fillStyle'], Path2D> | null;
 
 			/** path for clipping fill & stroke (used for gaps) */
@@ -747,14 +752,15 @@ declare namespace uPlot {
 
 		export type Fill = CanvasRenderingContext2D['fillStyle'] | ((self: uPlot, seriesIdx: number) => CanvasRenderingContext2D['fillStyle']);
 
+		// 指定如何绘制每一条线段末端，默认是 butt 方头，round 圆头出头，square 方头出头
 		export type Cap = CanvasRenderingContext2D['lineCap'];
 
 		export namespace Points {
 			export interface Paths {
-				/** path to stroke */
+				/** 线条路径 */
 				stroke?: Path2D | null;
 
-				/** path to fill */
+				/** 填充路径 */
 				fill?: Path2D | null;
 
 				/** path for clipping fill & stroke */
@@ -771,34 +777,37 @@ declare namespace uPlot {
 			export type PathBuilder = (self: uPlot, seriesIdx: number, idx0: number, idx1: number, filtIdxs?: number[] | null) => Paths | null;
 		}
 
+		/**
+		 * 圆点
+		 */
 		export interface Points {
-			/** if boolean or returns boolean, round points are drawn with defined options, else fn should draw own custom points via self.ctx */
+			/** 是否显示圆点, 否则需要通过 self.ctx 自己绘制点 */
 			show?: Points.Show;
 
 			paths?: Points.PathBuilder;
 
-			/** may return an array of points indices to draw */
+			/** 过滤器，返回要绘制的点 */
 			filter?: Points.Filter;
 
-			/** diameter of point in CSS pixels */
+			/** 圆点直径 */
 			size?: number;
 
 			/** minimum avg space between point centers before they're shown (default: size * 2) */
 			space?: number;
 
-			/** line width of circle outline in CSS pixels */
+			/** 圆点外圈线宽 */
 			width?: number;
 
-			/** line color of circle outline (defaults to series.stroke) */
+			/** 圆点外圈颜色（默认使用序列的线条颜色 series.stroke） */
 			stroke?: Stroke;
 
-			/** line dash segment array */
+			/** 虚线分段数组。按照实线长度，空白长度，重复这个模式来描述虚线 */
 			dash?: number[];
 
-			/** line cap */
+			/** 线段末端 */
 			cap?: Series.Cap;
 
-			/** fill color of circle (defaults to #fff) */
+			/** 圆点填充颜色，默认是白色 #fff */
 			fill?: Fill;
 		}
 
@@ -838,13 +847,13 @@ declare namespace uPlot {
 	}
 
 	export interface Series {
-		/** series on/off. when off, it will not affect its scale */
+		/** 序列开关 （可选，默认为true），为 false 则不显示本序列数据 */
 		show?: boolean;
 
 		/** className to add to legend parts and cursor hover points */
 		class?: string;
 
-		/** scale key */
+		/** 刻度尺的键 */
 		scale?: string;
 
 		/** whether this series' data is scanned during auto-ranging of its scale */
@@ -853,7 +862,7 @@ declare namespace uPlot {
 		/** if & how the data is pre-sorted (scale.auto optimization) */
 		sorted?: Series.Sorted;
 
-		/** when true, null data values will not cause line breaks */
+		/** 是否跳过值为空（null）的点。如果为false，则折线会在值为空的点处中断，如果值为true，则折线不会中断。断线会有点，没有连线 */
 		spanGaps?: boolean;
 
 		/** may mutate and/or augment gaps array found from null values */
@@ -862,13 +871,13 @@ declare namespace uPlot {
 		/** whether path and point drawing should offset canvas to try drawing crisp lines */
 		pxAlign?: number | boolean; // 1
 
-		/** legend label */
+		/** 图例文本标签，默认为 Value */
 		label?: string;
 
-		/** inline-legend value formatter. can be an fmtDate formatting string when scale.time: true */
+		/** 图例值的格式化器。当 scale.time 为 true 时可以用 fmtDate 格式化字符串 */
 		value?: Series.Value;
 
-		/** table-legend multi-values formatter */
+		/** 表格图例中多个值的格式化器 */
 		values?: Series.Values;
 
 		paths?: Series.PathBuilder;
@@ -879,34 +888,34 @@ declare namespace uPlot {
 		/** facets */
 		facets?: Series.Facet[];
 
-		/** line width in CSS pixels */
+		/** 折线图上连线的宽度，单位 px */
 		width?: number;
 
-		/** line & legend color */
+		/** 线条和图例颜色 */
 		stroke?: Series.Stroke;
 
-		/** area fill & legend color */
+		/** 区域填充颜色，也是图例指示器颜色 */
 		fill?: Series.Fill;
 
-		/** area fill baseline (default: 0) */
+		/** 填充基线，填充面积是从基线到点和连线。默认是 0 */
 		fillTo?: Series.FillTo;
 
-		/** line dash segment array */
+		/** 虚线分段数组。按照实线长度，空白长度，重复这个模式来描述虚线 */
 		dash?: number[];
 
-		/** line cap */
+		/** 线头样式 */
 		cap?: Series.Cap;
 
-		/** alpha-transparancy */
+		/** alpha 透明度 */
 		alpha?: number;
 
 		/** current min and max data indices rendered */
 		idxs?: Series.MinMaxIdxs;
 
-		/** current min rendered value */
+		/** 当前最小渲染值 */
 		min?: number;
 
-		/** current max rendered value */
+		/** 当前最大渲染值 */
 		max?: number;
 	}
 
@@ -972,16 +981,16 @@ declare namespace uPlot {
 			/** on/off */
 			show?: boolean; // true
 
-			/** line color */
+			/** 线条颜色 */
 			stroke?: Stroke;
 
-			/** line width in CSS pixels */
+			/** 线条宽度 */
 			width?: number;
 
-			/** line dash segment array */
+			/** 虚线分段数组。按照实线长度，空白长度，重复这个模式来描述虚线 */
 			dash?: number[];
 
-			/** line cap */
+			/** 线段头尾的样式 */
 			cap?: Series.Cap;
 		}
 
@@ -1007,25 +1016,25 @@ declare namespace uPlot {
 		/** scale key */
 		scale?: string;
 
-		/** side of chart - 0: top, 1: rgt, 2: btm, 3: lft */
+		/** 轴在图的什么方向 - 0: 上方, 1: 右侧, 2: 底部, 3: 左侧 */
 		side?: Axis.Side;
 
-		/** height of x axis or width of y axis in CSS pixels alloted for values, gap & ticks, but excluding axis label */
+		/** x 轴的高度 或者 y 轴的宽度。空间包括值、空隙、刻度。但是不包括轴上的文字标签 */
 		size?: Axis.Size;
 
 		/** gap between axis values and axis baseline (or ticks, if enabled) in CSS pixels */
 		gap?: number;
 
-		/** font used for axis values */
+		/** 该轴值的字体 */
 		font?: CanvasRenderingContext2D['font'];
 
 		/** font-size multiplier for multi-line axis values (similar to CSS line-height: 1.5em) */
 		lineGap?: number; // 1.5
 
-		/** color of axis label & values */
+		/** 轴上标签和值的颜色 */
 		stroke?: Axis.Stroke;
 
-		/** axis label text */
+		/** 轴上标签文本 */
 		label?: string;
 
 		/** height of x axis label or width of y axis label in CSS pixels alloted for label text + labelGap */
@@ -1037,7 +1046,7 @@ declare namespace uPlot {
 		/** font used for axis label */
 		labelFont?: CanvasRenderingContext2D['font'];
 
-		/** minimum grid & tick spacing in CSS pixels */
+		/** 网格或刻度的最小空间 */
 		space?: Axis.Space;
 
 		/** available divisors for axis ticks, values, grid */
@@ -1049,7 +1058,7 @@ declare namespace uPlot {
 		/** can filter which splits are passed to axis.values() for rendering. e.g splits.map(v => v % 2 == 0 ? v : null) */
 		filter?: Axis.Filter;
 
-		/** formats values for rendering */
+		/** 格式化渲染值 */
 		values?: Axis.Values;
 
 		/** values rotation in degrees off horizontal (only bottom axes w/ side: 2) */
@@ -1061,7 +1070,7 @@ declare namespace uPlot {
 		/** gridlines to draw from this axis' splits */
 		grid?: Axis.Grid;
 
-		/** ticks to draw from this axis' splits */
+		/** 刻度，ticks to draw from this axis' splits */
 		ticks?: Axis.Ticks;
 
 		/** axis border/edge rendering */
