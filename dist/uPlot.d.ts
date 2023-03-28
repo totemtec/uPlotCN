@@ -18,7 +18,7 @@ declare class uPlot {
 	/** 绘图区域 + 轴 的高度，单位是 px， (不包含标题和图例的高度) */
 	readonly height: number;
 
-	/** context of canvas used for plotting area + axes */
+	/** 绘制图表和轴的 canvas 上下文 */
 	readonly ctx: CanvasRenderingContext2D;
 
 	/** coords of plotting area in canvas pixels (relative to full canvas w/axes) */
@@ -30,26 +30,27 @@ declare class uPlot {
 	/** cursor state & opts*/
 	readonly cursor: uPlot.Cursor;
 
+	/** 图例 */
 	readonly legend: uPlot.Legend;
 
 //	/** focus opts */
 //	readonly focus: uPlot.Focus;
 
-	/** series state & opts */
+	/** 序列状态和选项 */
 	readonly series: uPlot.Series[];
 
-	/** scales state & opts */
+	/** 刻度尺状态和选项 */
 	readonly scales: {
 		[key: string]: uPlot.Scale;
 	};
 
-	/** axes state & opts */
+	/** 轴的状态和选项 */
 	readonly axes: uPlot.Axis[];
 
 	/** hooks, including any added by plugins */
 	readonly hooks: uPlot.Hooks.Arrays;
 
-	/** current data */
+	/** 图表当前数据 */
 	readonly data: uPlot.AlignedData;
 
 	/** .u-over dom element */
@@ -64,7 +65,7 @@ declare class uPlot {
 	/** defers recalc & redraw for multiple ops, e.g. setScale('x', ...) && setScale('y', ...) */
 	batch(txn: Function): void;
 
-	/** destroys DOM, removes resize & scroll listeners, etc. */
+	/** 销毁DOM，删除 resize 和 scroll 监听器等 */
 	destroy(): void;
 
 	/** sets the chart data & redraws. (default resetScales = true) */
@@ -207,29 +208,33 @@ declare namespace uPlot {
 		Expand = 2,
 	}
 
+	/** 方向 */
 	export const enum Orientation {
 		Horizontal = 0,
 		Vertical   = 1,
 	}
 
+	/** 固定类型的数组 */
 	export type TypedArray = Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array;
 
+	/** 对齐的数据 */
 	export type AlignedData = TypedArray[] | [
 		xValues: number[] | TypedArray,
 		...yValues: ((number | null | undefined)[] | TypedArray)[],
 	]
 
+	/** 日期月份、星期名称 */
 	export interface DateNames {
-		/** long month names */
+		/** 月份全称数组，例如 8: September */
 		MMMM: string[];
 
-		/** short month names */
+		/** 月份缩写数组，例如 8: Sept */
 		MMM:  string[];
 
-		/** long weekday names (0: Sunday) */
+		/** 全称星期几数组，例如 0：Sunday */
 		WWWW: string[];
 
-		/** short weekday names (0: Sun) */
+		/** 缩写的星期几数组，例如 0：Sun */
 		WWW:  string[];
 	}
 
@@ -321,10 +326,19 @@ declare namespace uPlot {
 		}
 	}
 
+	/**
+	 * 日期时间格式化模板字符串，例如 {YYYY}-{MM}-{DD}
+	 */
 	export type DateFormatterFactory = (tpl: string) => (date: Date) => string;
 
+	/**
+	 * 自定义日期时间格式化
+	 */
 	export type LocalDateFromUnix = (ts: number) => Date;
 
+	/**
+	 * 绘制顺序键
+	 */
 	export const enum DrawOrderKey {
 		Axes   = 'axes',
 		Series = 'series',
@@ -345,7 +359,7 @@ declare namespace uPlot {
 		/** 图表 div 的 id */
 		id?: string;
 
-		/** className to add to chart div */
+		/** 图表 div 样式类 */
 		class?: string;
 
 		/** 绘图区域和轴的宽度，单位 px */
@@ -354,22 +368,22 @@ declare namespace uPlot {
 		/** 绘图区域和轴的高度，单位 px（不包括标题和图例区域）*/
 		height: number;
 
-		/** data for chart, if none is provided as argument to constructor */
+		/** 图表数据 */
 		data?: AlignedData;
 
-		/** converts a unix timestamp to Date that's time-adjusted for the desired timezone */
+		/** 自定义日期时间格式化，可以提供时区转换等功能 */
 		tzDate?: LocalDateFromUnix;
 
-		/** creates an efficient formatter for Date objects from a template string, e.g. {YYYY}-{MM}-{DD} */
+		/** 日期时间格式化模板字符串，例如 {YYYY}-{MM}-{DD} */
 		fmtDate?: DateFormatterFactory;
 
 		/** timestamp multiplier that yields 1 millisecond */
 		ms?: 1e-3 | 1; // 1e-3
 
-		/** drawing order for axes/grid & series (default: ["axes", "series"]) */
+		/** 轴/网格 和 序列数据的绘制顺序 (默认是: ["axes", "series"]) */
 		drawOrder?: DrawOrderKey[];
 
-		/** whether vt & hz lines of series/grid/ticks should be crisp/sharp or sub-px antialiased */
+		/** 线条柔化和反锯齿 */
 		pxAlign?: boolean | number; // true
 
 		// 序列数组，描述各序列的属性
@@ -377,6 +391,7 @@ declare namespace uPlot {
 
 		bands?: Band[];
 
+		/** 刻度尺 */
 		scales?: Scales;
 
 		// 轴的配置
@@ -387,6 +402,7 @@ declare namespace uPlot {
 
 		select?: Select;
 
+		/** 图例 */
 		legend?: Legend;
 
 		cursor?: Cursor;
@@ -578,9 +594,6 @@ declare namespace uPlot {
 		lock?: boolean; // false
 	}
 
-	/**
-	 * 刻度尺
-	 */
 	export namespace Scale {
 		export type Auto = boolean | ((self: uPlot, resetScales: boolean) => boolean);
 
@@ -598,9 +611,7 @@ declare namespace uPlot {
 		export type Clamp = number | ((self: uPlot, val: number, scaleMin: number, scaleMax: number, scaleKey: string) => number);
 	}
 
-	/**
-	 * 刻度尺
-	 */
+	/** 刻度尺 */
 	export interface Scale {
 		/** 是否是时间刻度尺，该轴数据需要 Unix 时间戳，单位秒 */
 		time?: boolean;
@@ -614,11 +625,11 @@ declare namespace uPlot {
 		/** scale key from which this scale is derived */
 		from?: string;
 
-		/** scale distribution. 1: linear, 2: ordinal, 3: logarithmic, 4: arcsinh */
+		/** 刻度尺类型：1: 线性, 2: ordinal, 3: 对数, 4: arcsinh */
 		distr?: Scale.Distr; // 1
 
-		/** logarithmic base */
-		log?: Scale.LogBase; // 10;
+		/** 对数坐标的底，默认是 10 */
+		log?: Scale.LogBase;
 
 		/** clamps log scale values <= 0 (default = scaleMin / 10) */
 		clamp?: Scale.Clamp;
@@ -626,16 +637,16 @@ declare namespace uPlot {
 		/** arcsinh linear threshold */
 		asinh?: number; // 1
 
-		/** current min scale value */
+		/** 最小刻度值 */
 		min?: number;
 
-		/** current max scale value */
+		/** 最大刻度值 */
 		max?: number;
 
-		/** scale direction */
+		/** 刻度尺指向 */
 		dir?: 1 | -1;
 
-		/** scale orientation - 0: hz, 1: vt */
+		/** 刻度尺方向 - 0: 水平, 1: 垂直 */
 		ori?: 0 | 1;
 
 		/** own key (for read-back) */
@@ -783,9 +794,7 @@ declare namespace uPlot {
 			export type PathBuilder = (self: uPlot, seriesIdx: number, idx0: number, idx1: number, filtIdxs?: number[] | null) => Paths | null;
 		}
 
-		/**
-		 * 圆点
-		 */
+		/** 圆点，每个数据的位置会绘制一个圆点 */
 		export interface Points {
 			/** 是否显示圆点, 否则需要通过 self.ctx 自己绘制点 */
 			show?: Points.Show;
@@ -969,6 +978,9 @@ declare namespace uPlot {
 
 		export type Stroke = CanvasRenderingContext2D['strokeStyle'] | ((self: uPlot, axisIdx: number) => CanvasRenderingContext2D['strokeStyle']);
 
+		/**
+		 * 轴在图的哪边
+		 */
 		export const enum Side {
 			Top    = 0,
 			Right  = 1,
@@ -976,6 +988,9 @@ declare namespace uPlot {
 			Left   = 3,
 		}
 
+		/**
+		 * 轴上文字对齐方式
+		 */
 		export const enum Align {
 			Left  = 1,
 			Right = 2,
