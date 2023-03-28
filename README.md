@@ -14,7 +14,7 @@
 ---
 ### 文档 (进行中)
 
-uPlot 文档写的不够完善。学习的话可以先读中文文档 [/docs/README_CN.md](hhttps://github.com/totemtec/uPlotCN/blob/main/docs/README_CN.md) 了解概念。然后，跑跑官方 [/demos](https://leeoniya.github.io/uPlot/demos/index.html) 。这些例子涵盖了 uPlot API 的绝大部分内容。如果要查阅完整的 API 可以查看代码的中文注释 [/dist/uPlot.d.ts](https://github.com/totemtec/uPlotCN/blob/main/dist/uPlot.d.ts) 。
+uPlot 文档写的不够完善。学习的话可以先读中文文档 [/docs/README_CN.md](https://github.com/totemtec/uPlotCN/blob/main/docs/README_CN.md) 了解概念。然后，跑跑官方 [/demos](https://leeoniya.github.io/uPlot/demos/index.html) 。这些例子涵盖了 uPlot API 的绝大部分内容。如果要查阅完整的 API 可以查看代码的中文注释 [/dist/uPlot.d.ts](https://github.com/totemtec/uPlotCN/blob/main/dist/uPlot.d.ts) 。
 
 
 ---
